@@ -56,7 +56,7 @@ class IDIot {
 	private static NXTColorSensor colorSensorRight; //fargesensor høyre ny type
 	private static EV3ColorSensor colorSensorLeft; //fargesensor vesntre gammel type
 	private static SensorMode colorLeft;
-	private static SensorMode colorRight;
+	private static SampleProvider colorRight;
 	private static float[] colorSampleLeft;
 	private static float[] colorSampleRight;
 	//private static int vol = Sound.getVolume();
@@ -64,14 +64,15 @@ class IDIot {
 	// Konstanter
 	private static final int SPEED = 450;
 	private static final int TURN_SPEED = 200;
-	private static final int SWORD_SPEED = 200;
+	private static final int SWORD_SPEED = 600;
 	private static final int FLAGG_SPEED = 250;
 
 	// Andre variabler
-	private static final String VERSION = "a_0.6.4";
+	private static final String VERSION = "a_0.6.6";
 	//lyd
 	private static long naaTid;
 	private static long forrigeTid;
+
 	public static void main(String[] args) {
 		// Print startmelding
 		System.out.println("IDIot versjon " + VERSION);
@@ -84,19 +85,20 @@ class IDIot {
 		// Venstre sensor = port 1
 		colorSensorLeft = new EV3ColorSensor(p1);
 		// Høyre sensor = port 2
-		colorSensorRight = new NXTColorSensor(SensorPort.S2);
+		colorSensorRight = new NXTColorSensor(p2);
 
-		colorLeft = colorSensorLeft.getColorIDMode();
-		colorRight = colorSensorRight.getColorIDMode();
+		colorLeft = colorSensorLeft.getColorIDMode(); //SensorMode	getColorIDMode() EV3 color sensor, Color ID mode Measures the color ID of a surface.
+		colorRight = colorSensorRight.getColorIDMode(); //SensorMode getColorIDMode() get a sample provider in color ID mode
 
 		// Hastighet på roboten
 		Motor.A.setSpeed(SPEED);		// Venstre
 		Motor.B.setSpeed(SPEED);		// Høyre
 		Motor.C.setSpeed(SWORD_SPEED);	// Sverd
 		Motor.D.setSpeed(FLAGG_SPEED);	// Flagg
+		//Motor.C.forward();
+
 		/*
 		Motor.C.forward();
-		Motor.D.forward();
 		*/
 		// Andre variabler
 		//Sound.setVolume(66);
@@ -161,7 +163,7 @@ class IDIot {
 			Motor.A.stop();
 			Motor.B.setSpeed(TURN_SPEED);
 		}
-		else{
+		else if(direction==2){
 			Motor.B.stop();
 			Motor.A.setSpeed(TURN_SPEED);
 		}
@@ -189,10 +191,6 @@ class IDIot {
 		if ((int)colorSampleRight[0] == 7) {
 			return 2;
 		}
-
-		/*if (colorSensorRight2.getColorID() == 7) {
-			return 2;
-		}*/
 
 		return 0;
 	}
