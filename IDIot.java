@@ -4,6 +4,7 @@ import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.NXTColorSensor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.port.Port;
+import lejos.hardware.port.*;
 import lejos.hardware.Brick;
 import lejos.hardware.Sound;
 import lejos.hardware.BrickFinder;
@@ -22,6 +23,9 @@ import java.util.*;
  *
  * Historie:
  * ---------
+ *
+ * 26.09.2018_05 - version a_0.5
+ * - Tried to fix sensor error
  *
  * 26.09.2018_04 - Version a_0.4
  * - Added second color sensor
@@ -64,7 +68,7 @@ class IDIot {
 	private static final int FLAGG_SPEED = 250;
 
 	// Andre variabler
-	private static final String VERSION = "a_0.5";
+	private static final String VERSION = "a_0.6";
 	//lyd
 	private static long naaTid;
 	private static long forrigeTid;
@@ -80,7 +84,7 @@ class IDIot {
 		// Venstre sensor = port 1
 		colorSensorLeft = new EV3ColorSensor(p1);
 		// Høyre sensor = port 2
-		colorSensorRight = new NXTColorSensor(p2);
+		colorSensorRight = new NXTColorSensor(SensorPort.S2);
 		//colorSensorRight2 = new ColorSensor(p2);
 
 		colorLeft = colorSensorLeft.getColorIDMode();
