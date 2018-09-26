@@ -1,6 +1,7 @@
 import lejos.hardware.motor.*;
 import lejos.hardware.lcd.*;
 import lejos.hardware.sensor.EV3TouchSensor;
+import lejos.hardware.sensor.NXTColorSensor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.port.Port;
 import lejos.hardware.Brick;
@@ -22,8 +23,11 @@ import java.util.*;
  * Historie:
  * ---------
  *
+ * 26.09.2018_02
+ * Version a_0.2
+ *
  * 26.09.2018_01
- * Versjon 0.1
+ * Versjon a_0.1
  *
  * 25.09.2018
  * Første revisjon
@@ -39,7 +43,7 @@ class IDIot {
 	private static TextLCD lcd;
 	private static NXTColorSensor colorSensorRight; //fargesensor høyre ny type
 	private static EV3ColorSensor colorSensorLeft; //fargesensor vesntre gammel type
-	private static SampleProvider colorReader;
+	private static SensorMode colorLeft;
 	private static float[] colorSample;
 
 	// Konstanter
@@ -61,7 +65,9 @@ class IDIot {
 		// Venstre sensor = port 1
 		colorSensorLeft = new EV3ColorSensor(p1);
 		// Høyre sensor = port 2
-		colorSensorRight = new NXTColorSensor(p2);
+		//colorSensorRight = new NXTColorSensor(p2);
+
+		colorLeft = colorSensorLeft.getColorIDMode();
 
 		// Hastighet på roboten
 		Motor.A.setSpeed(SPEED);		// Venstre
@@ -147,10 +153,12 @@ class IDIot {
 	// = 2: left
 	// = 3: both
 	private static int checkForBlack() {
-		if (colorSensorRight.getColorID() == 7) {
+		colorSample = new float[colorLeft.sampleSize()];
+		colorLeft.fetchSample(colorSample, 0);
+		/*if (colorSensorRight.getColorID() == 7) {
 			return 1;
-		}
-		if(colorSensorLeft.getColorID() == 7) {
+		}*/
+		if((int)colorSample[0] == 7) {
 			return 2;
 		}
 		else {
