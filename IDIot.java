@@ -87,8 +87,8 @@ class IDIot {
 		// Høyre sensor = port 2
 		colorSensorRight = new NXTColorSensor(p2);
 
-		colorLeft = colorSensorLeft.getColorIDMode(); //SensorMode	getColorIDMode() EV3 color sensor, Color ID mode Measures the color ID of a surface.
-		colorRight = colorSensorRight.getColorIDMode(); //SensorMode getColorIDMode() get a sample provider in color ID mode
+		colorLeft = colorSensorLeft.getRGBMode(); //SensorMode	getColorIDMode() EV3 color sensor, Color ID mode Measures the color ID of a surface.
+		colorRight = colorSensorRight.getRGBMode(); //SensorMode getColorIDMode() get a sample provider in color ID mode
 
 		// Hastighet på roboten
 		Motor.A.setSpeed(SPEED);		// Venstre
@@ -158,12 +158,12 @@ class IDIot {
 
 	private static void turnUntilWhite(int direction) {
 		// Sving inntil begge er utenfor svart
-		if(direction==1){
+		if(direction == 1){
 			//TODO test om det er bedre å senke farten på det ene hjulet istedet for å stoppe det.
 			Motor.A.stop();
 			Motor.B.setSpeed(TURN_SPEED);
 		}
-		else if(direction==2){
+		else if(direction == 2){
 			Motor.B.stop();
 			Motor.A.setSpeed(TURN_SPEED);
 		}
