@@ -53,7 +53,7 @@ class IDIot {
 	private static Port p1;
 	private static Port p2;
 	private static TextLCD lcd;
-	private static NXTColorSensor colorSensorRight; //fargesensor høyre ny type
+	private static EV3ColorSensor colorSensorRight; //fargesensor høyre ny type
 	private static EV3ColorSensor colorSensorLeft; //fargesensor vesntre gammel type
 	private static SensorMode colorLeft;
 	private static SensorMode colorRight;
@@ -64,11 +64,11 @@ class IDIot {
 	// Konstanter
 	private static final int SPEED = 450;
 	private static final int TURN_SPEED = 200;
-	private static final int SWORD_SPEED = 450;
+	private static final int SWORD_SPEED = 550;
 	private static final int FLAGG_SPEED = 250;
 
 	// Andre variabler
-	private static final String VERSION = "a_0.6.8";
+	private static final String VERSION = "a_0.6.10";
 	//lyd
 	private static long naaTid;
 	private static long forrigeTid;
@@ -85,17 +85,19 @@ class IDIot {
 		// Venstre sensor = port 1
 		colorSensorLeft = new EV3ColorSensor(p1);
 		// Høyre sensor = port 2
-		colorSensorRight = new NXTColorSensor(p2);
+		colorSensorRight = new EV3ColorSensor(p2);
 
 		colorLeft = colorSensorLeft.getColorIDMode();
-		colorRight = colorSensorRight.getRGBMode();
+		colorRight = colorSensorRight.getColorIDMode();
 
 		// Hastighet på roboten
 		Motor.A.setSpeed(SPEED);		// Venstre
 		Motor.B.setSpeed(SPEED);		// Høyre
 		Motor.C.setSpeed(SWORD_SPEED);	// Sverd
 		Motor.D.setSpeed(FLAGG_SPEED);	// Flagg
-		//Motor.C.forward();
+		// Starter flagg og sverd
+		Motor.C.forward();				// Sverd
+		Motor.D.forward();				// Flagg
 
 		/*
 		Motor.C.forward();
