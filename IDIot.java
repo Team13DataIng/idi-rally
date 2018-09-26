@@ -50,6 +50,7 @@ class IDIot {
 	private static Port p2;
 	private static TextLCD lcd;
 	private static NXTColorSensor colorSensorRight; //fargesensor høyre ny type
+	//private static ColorSensor colorSensorRight2;
 	private static EV3ColorSensor colorSensorLeft; //fargesensor vesntre gammel type
 	private static SensorMode colorLeft;
 	private static SensorMode colorRight;
@@ -63,8 +64,10 @@ class IDIot {
 	private static final int FLAGG_SPEED = 250;
 
 	// Andre variabler
-	private static final String VERSION = "a_0.4";
-
+	private static final String VERSION = "a_0.5";
+	//lyd
+	private static long naaTid;
+	private static long forrigeTid;
 	public static void main(String[] args) {
 		// Print startmelding
 		System.out.println("IDIot versjon " + VERSION);
@@ -78,9 +81,10 @@ class IDIot {
 		colorSensorLeft = new EV3ColorSensor(p1);
 		// Høyre sensor = port 2
 		colorSensorRight = new NXTColorSensor(p2);
+		//colorSensorRight2 = new ColorSensor(p2);
 
 		colorLeft = colorSensorLeft.getColorIDMode();
-		colorRight = colorSensorRight.getColorIDMode();
+		//colorRight = colorSensorRight.getColorIDMode();
 
 		// Hastighet på roboten
 		Motor.A.setSpeed(SPEED);		// Venstre
@@ -173,11 +177,16 @@ class IDIot {
 		if((int)colorSampleLeft[0] == 7) {
 			return 1;
 		}
-		colorSampleRight = new float[colorRight.sampleSize()];
-		colorRight.fetchSample(colorSampleRight, 0);
-		if ((int)colorSampleRight[0] == 7) {
+		/*colorSampleRight = new float[colorRight.sampleSize()];
+		colorRight.fetchSample(colorSampleRight, 0);*/
+
+		if (colorSensorRight.getColorID() == 7) {
 			return 2;
 		}
+
+		/*if (colorSensorRight2.getColorID() == 7) {
+			return 2;
+		}*/
 
 		return 0;
 	}
