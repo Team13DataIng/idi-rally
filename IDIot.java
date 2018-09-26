@@ -23,6 +23,9 @@ import java.util.*;
  * Historie:
  * ---------
  *
+ * 26.09.2018_03
+ * Version a_0.3
+ *
  * 26.09.2018_02
  * Version a_0.2
  *
@@ -51,7 +54,7 @@ class IDIot {
 	private static final int TURN_SPEED = 200;
 
 	// Andre variabler
-	private static final String VERSION = "a_0.1";
+	private static final String VERSION = "a_0.3";
 
 	public static void main(String[] args) {
 		// Print startmelding
@@ -87,12 +90,12 @@ class IDIot {
 	private static void startMotor(boolean reverse) {
 		// Start begge motorer
 		if (!reverse) {
-			Motor.A.backward();
-			Motor.B.backward();
-		} // Dersom reverse = true, går motorene bakover
-		else {
 			Motor.A.forward();
 			Motor.B.forward();
+		} // Dersom reverse = true, går motorene bakover
+		else {
+			Motor.A.backward();
+			Motor.B.backward();
 		}
 	}
 
