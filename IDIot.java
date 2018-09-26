@@ -68,7 +68,7 @@ class IDIot {
 	private static final int FLAGG_SPEED = 250;
 
 	// Andre variabler
-	private static final String VERSION = "a_0.6";
+	private static final String VERSION = "a_0.6.3";
 	//lyd
 	private static long naaTid;
 	private static long forrigeTid;
@@ -84,7 +84,7 @@ class IDIot {
 		// Venstre sensor = port 1
 		colorSensorLeft = new EV3ColorSensor(p1);
 		// Høyre sensor = port 2
-		colorSensorRight = new NXTColorSensor(SensorPort.S2);
+		//colorSensorRight = new NXTColorSensor(SensorPort.S2);
 		//colorSensorRight2 = new ColorSensor(p2);
 
 		colorLeft = colorSensorLeft.getColorIDMode();
@@ -184,9 +184,9 @@ class IDIot {
 		/*colorSampleRight = new float[colorRight.sampleSize()];
 		colorRight.fetchSample(colorSampleRight, 0);*/
 
-		if (colorSensorRight.getColorID() == 7) {
+		/*if (colorSensorRight.getColorID() == 7) {
 			return 2;
-		}
+		}*/
 
 		/*if (colorSensorRight2.getColorID() == 7) {
 			return 2;
