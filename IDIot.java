@@ -3,6 +3,9 @@ import lejos.hardware.lcd.*;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.NXTColorSensor;
 import lejos.hardware.sensor.EV3ColorSensor;
+// test
+import lejos.hardware.sensor.HiTechnicColorSensor;
+
 import lejos.hardware.port.Port;
 import lejos.hardware.port.*;
 import lejos.hardware.Brick;
@@ -53,7 +56,7 @@ class IDIot {
 	private static Port p1;
 	private static Port p2;
 	private static TextLCD lcd;
-	private static EV3ColorSensor colorSensorRight; //fargesensor høyre ny type
+	private static HiTechnicColorSensor colorSensorRight; //fargesensor høyre ny type
 	private static EV3ColorSensor colorSensorLeft; //fargesensor vesntre gammel type
 	private static SensorMode colorLeft;
 	private static SensorMode colorRight;
@@ -68,7 +71,7 @@ class IDIot {
 	private static final int FLAGG_SPEED = 250;
 
 	// Andre variabler
-	private static final String VERSION = "a_0.6.10";
+	private static final String VERSION = "a_0.7.1";
 	//lyd
 	private static long naaTid;
 	private static long forrigeTid;
@@ -85,7 +88,7 @@ class IDIot {
 		// Venstre sensor = port 1
 		colorSensorLeft = new EV3ColorSensor(p1);
 		// Høyre sensor = port 2
-		colorSensorRight = new EV3ColorSensor(p2);
+		colorSensorRight = new HiTechnicColorSensor(p2);
 
 		colorLeft = colorSensorLeft.getColorIDMode();
 		colorRight = colorSensorRight.getColorIDMode();
@@ -192,6 +195,7 @@ class IDIot {
 			System.out.println("Svart på venstre!");
 			return 1;
 		}
+
 		colorSampleRight = new float[colorRight.sampleSize()];
 		colorRight.fetchSample(colorSampleRight, 0);
 		if ((int)colorSampleRight[0] == 7) {
