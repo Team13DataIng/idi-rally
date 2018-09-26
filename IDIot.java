@@ -5,7 +5,6 @@ import lejos.hardware.sensor.NXTColorSensor;
 import lejos.hardware.sensor.EV3ColorSensor;
 // test
 import lejos.hardware.sensor.HiTechnicColorSensor;
-
 import lejos.hardware.port.Port;
 import lejos.hardware.port.*;
 import lejos.hardware.Brick;
@@ -66,12 +65,12 @@ class IDIot {
 
 	// Konstanter
 	private static final int SPEED = 450;
-	private static final int TURN_SPEED = 200;
+	private static final int TURN_SPEED = 150;
 	private static final int SWORD_SPEED = 550;
 	private static final int FLAGG_SPEED = 250;
 
 	// Andre variabler
-	private static final String VERSION = "a_0.7.1";
+	private static final String VERSION = "b_1.0";
 	//lyd
 	private static long naaTid;
 	private static long forrigeTid;
