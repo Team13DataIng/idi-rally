@@ -96,7 +96,7 @@ class IDIot {
 		Motor.D.setSpeed(FLAGG_SPEED);	// Flagg
 
 		// Andre variabler
-		Sound.setVolume(66);
+		//Sound.setVolume(66);
 
 		// Start av programmet
 		int direction = 0;
