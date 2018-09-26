@@ -56,7 +56,7 @@ class IDIot {
 	private static NXTColorSensor colorSensorRight; //fargesensor høyre ny type
 	private static EV3ColorSensor colorSensorLeft; //fargesensor vesntre gammel type
 	private static SensorMode colorLeft;
-	private static SampleProvider colorRight;
+	private static SensorMode colorRight;
 	private static float[] colorSampleLeft;
 	private static float[] colorSampleRight;
 	//private static int vol = Sound.getVolume();
@@ -64,11 +64,11 @@ class IDIot {
 	// Konstanter
 	private static final int SPEED = 450;
 	private static final int TURN_SPEED = 200;
-	private static final int SWORD_SPEED = 600;
+	private static final int SWORD_SPEED = 450;
 	private static final int FLAGG_SPEED = 250;
 
 	// Andre variabler
-	private static final String VERSION = "a_0.6.6";
+	private static final String VERSION = "a_0.6.8";
 	//lyd
 	private static long naaTid;
 	private static long forrigeTid;
@@ -87,8 +87,8 @@ class IDIot {
 		// Høyre sensor = port 2
 		colorSensorRight = new NXTColorSensor(p2);
 
-		colorLeft = colorSensorLeft.getRGBMode(); //SensorMode	getColorIDMode() EV3 color sensor, Color ID mode Measures the color ID of a surface.
-		colorRight = colorSensorRight.getRGBMode(); //SensorMode getColorIDMode() get a sample provider in color ID mode
+		colorLeft = colorSensorLeft.getColorIDMode();
+		colorRight = colorSensorRight.getRGBMode();
 
 		// Hastighet på roboten
 		Motor.A.setSpeed(SPEED);		// Venstre
@@ -108,7 +108,8 @@ class IDIot {
 
 		while (true) {
 			direction = driveUntilBlack();
-			turnUntilWhite(direction);
+
+			if(direction != 0) turnUntilWhite(direction);
 		}
 	}
 
@@ -159,11 +160,13 @@ class IDIot {
 	private static void turnUntilWhite(int direction) {
 		// Sving inntil begge er utenfor svart
 		if(direction == 1){
-			//TODO test om det er bedre å senke farten på det ene hjulet istedet for å stoppe det.
+			//todo test om det er bedre å senke farten på det ene hjulet istedet for å stoppe det.
+			System.out.println("Svinger til venstre");
 			Motor.A.stop();
 			Motor.B.setSpeed(TURN_SPEED);
 		}
 		else if(direction == 2){
+			System.out.println("Svinger til høyre");
 			Motor.B.stop();
 			Motor.A.setSpeed(TURN_SPEED);
 		}
@@ -184,13 +187,17 @@ class IDIot {
 		colorSampleLeft = new float[colorLeft.sampleSize()];
 		colorLeft.fetchSample(colorSampleLeft, 0);
 		if((int)colorSampleLeft[0] == 7) {
+			System.out.println("Svart på venstre!");
 			return 1;
 		}
 		colorSampleRight = new float[colorRight.sampleSize()];
 		colorRight.fetchSample(colorSampleRight, 0);
 		if ((int)colorSampleRight[0] == 7) {
+			System.out.println("Svart på høyre!");
 			return 2;
 		}
+
+		System.out.println("Ittno svart her!");
 
 		return 0;
 	}
