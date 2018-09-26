@@ -23,11 +23,16 @@ import java.util.*;
  * Historie:
  * ---------
  *
+ * 26.09.2018_04 - Version a_0.4
+ * - Added second color sensor
+ *
  * 26.09.2018_03
  * Version a_0.3
+ * - Fixed issue with robot running backwards
  *
  * 26.09.2018_02
  * Version a_0.2
+ * - Fixed Color Sensor mode error
  *
  * 26.09.2018_01
  * Versjon a_0.1
@@ -47,14 +52,18 @@ class IDIot {
 	private static NXTColorSensor colorSensorRight; //fargesensor høyre ny type
 	private static EV3ColorSensor colorSensorLeft; //fargesensor vesntre gammel type
 	private static SensorMode colorLeft;
-	private static float[] colorSample;
+	private static SensorMode colorRight;
+	private static float[] colorSampleLeft;
+	private static float[] colorSampleRight;
+	//private static int vol = Sound.getVolume();
 
 	// Konstanter
 	private static final int SPEED = 450;
 	private static final int TURN_SPEED = 200;
+	private static final int FLAGG_SPEED = 250;
 
 	// Andre variabler
-	private static final String VERSION = "a_0.3";
+	private static final String VERSION = "a_0.4";
 
 	public static void main(String[] args) {
 		// Print startmelding
@@ -68,19 +77,22 @@ class IDIot {
 		// Venstre sensor = port 1
 		colorSensorLeft = new EV3ColorSensor(p1);
 		// Høyre sensor = port 2
-		//colorSensorRight = new NXTColorSensor(p2);
+		colorSensorRight = new NXTColorSensor(p2);
 
 		colorLeft = colorSensorLeft.getColorIDMode();
+		colorRight = colorSensorRight.getColorIDMode();
 
 		// Hastighet på roboten
 		Motor.A.setSpeed(SPEED);		// Venstre
 		Motor.B.setSpeed(SPEED);		// Høyre
+		Motor.D.setSpeed(FLAGG_SPEED);	// Flagg
 
 		// Andre variabler
+		Sound.setVolume(66);
 
-
-		int direction = 0;
 		// Start av programmet
+		int direction = 0;
+
 		while (true) {
 			direction = driveUntilBlack();
 			turnUntilWhite(direction);
@@ -152,20 +164,21 @@ class IDIot {
 
 	// Check for black
 	// = 0: none
-	// = 1: right
-	// = 2: left
+	// = 1: left
+	// = 2: right
 	// = 3: both
 	private static int checkForBlack() {
-		colorSample = new float[colorLeft.sampleSize()];
-		colorLeft.fetchSample(colorSample, 0);
-		/*if (colorSensorRight.getColorID() == 7) {
+		colorSampleLeft = new float[colorLeft.sampleSize()];
+		colorLeft.fetchSample(colorSampleLeft, 0);
+		if((int)colorSampleLeft[0] == 7) {
 			return 1;
-		}*/
-		if((int)colorSample[0] == 7) {
+		}
+		colorSampleRight = new float[colorRight.sampleSize()];
+		colorRight.fetchSample(colorSampleRight, 0);
+		if ((int)colorSampleRight[0] == 7) {
 			return 2;
 		}
-		else {
-			return 0;
-		}
+
+		return 0;
 	}
 }
