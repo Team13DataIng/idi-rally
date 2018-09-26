@@ -3,7 +3,6 @@ import lejos.hardware.lcd.*;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.NXTColorSensor;
 import lejos.hardware.sensor.EV3ColorSensor;
-// test
 import lejos.hardware.sensor.HiTechnicColorSensor;
 import lejos.hardware.port.Port;
 import lejos.hardware.port.*;
@@ -70,7 +69,7 @@ class IDIot {
 	private static final int FLAGG_SPEED = 250;
 
 	// Andre variabler
-	private static final String VERSION = "b_1.0";
+	private static final String VERSION = "b_1.0.1";
 	//lyd
 	private static long naaTid;
 	private static long forrigeTid;
@@ -166,12 +165,14 @@ class IDIot {
 		if(direction == 1){
 			//todo test om det er bedre å senke farten på det ene hjulet istedet for å stoppe det.
 			System.out.println("Svinger til venstre");
-			Motor.A.stop();
+			Motor.A.setSpeed(TURN_SPEED);
+			Motor.A.backward();
 			Motor.B.setSpeed(TURN_SPEED);
 		}
 		else if(direction == 2){
 			System.out.println("Svinger til høyre");
-			Motor.B.stop();
+			Motor.B.setSpeed(TURN_SPEED);
+			Motor.B.backward();
 			Motor.A.setSpeed(TURN_SPEED);
 		}
 		while (true) {
