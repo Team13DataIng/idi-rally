@@ -1,19 +1,14 @@
 import lejos.hardware.motor.*;
 import lejos.hardware.lcd.*;
-import lejos.hardware.sensor.EV3TouchSensor;
-import lejos.hardware.sensor.NXTColorSensor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.HiTechnicColorSensor;
-import lejos.hardware.port.Port;
+import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.port.*;
 import lejos.hardware.Brick;
-import lejos.hardware.Sound;
 import lejos.hardware.BrickFinder;
 import lejos.hardware.ev3.EV3;
 import lejos.hardware.Keys;
-import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
-import lejos.hardware.sensor.NXTSoundSensor;
 import lejos.hardware.sensor.*;
 import lejos.hardware.Button;
 import java.util.*;
@@ -21,30 +16,6 @@ import java.util.*;
 /**
  * Dato:		25.09.2018
  * Forfattere:	Torstein H. Sundfær, Cato Bakken, Torbjørn B. Lauvvik, Jonas B. Jacobsen, Eirik Hemstad
- *
- * Historie:
- * ---------
- *
- * 26.09.2018_05 - version a_0.5
- * - Tried to fix sensor error
- *
- * 26.09.2018_04 - Version a_0.4
- * - Added second color sensor
- *
- * 26.09.2018_03
- * Version a_0.3
- * - Fixed issue with robot running backwards
- *
- * 26.09.2018_02
- * Version a_0.2
- * - Fixed Color Sensor mode error
- *
- * 26.09.2018_01
- * Versjon a_0.1
- *
- * 25.09.2018
- * Første revisjon
- *
 **/
 
 class IDIot {
@@ -53,6 +24,7 @@ class IDIot {
 	private static Brick brick;
 	private static Port p1;
 	private static Port p2;
+	private static Port p4;
 	private static TextLCD lcd;
 	private static HiTechnicColorSensor colorSensorRight; // Høyre fargesensor
 	private static EV3ColorSensor colorSensorLeft; // Venstre fargesensor
@@ -60,7 +32,9 @@ class IDIot {
 	private static SensorMode colorRight;
 	private static float[] colorSampleLeft;
 	private static float[] colorSampleRight;
-	//private static int vol = Sound.getVolume();
+	private static SampleProvider touchSensor;
+	private static float[] touchSample;
+	private static Mario mario;
 
 	// Konstanter
 	private static final int SPEED = 450;
@@ -68,18 +42,24 @@ class IDIot {
 	private static final int SWORD_SPEED = 550;
 	private static final int FLAGG_SPEED = 250;
 	private static final int REVERSE_SPEED = 80;
+	private static float BLACK_LIMIT_LEFT;
+	private static float BLACK_LIMIT_RIGHT;
+
+	//Variabel som bestemmer om roboten skal kjøre eller er ferdig
+	private static boolean go = true;
 
 	// Andre variabler
-	private static final String VERSION = "b_1.0.3";
+	private static final String VERSION = "b_1.1.0";
 
 	public static void main(String[] args) {
 		// Print startmelding
 		System.out.println("IDIot versjon " + VERSION);
 
-		// Oppsett av robotens komponenter
+		// Oppsett av robotens kompone	nter
 		brick = BrickFinder.getDefault();
 		p1 = brick.getPort("S1"); // Fargesensor venstre
 		p2 = brick.getPort("S2"); // Fargesensor høyre
+		p4 = brick.getPort("S4"); // Trykksensor
 
 		// Venstre sensor = port 1
 		colorSensorLeft = new EV3ColorSensor(p1);
@@ -87,30 +67,41 @@ class IDIot {
 		colorSensorRight = new HiTechnicColorSensor(p2);
 
 		// Sett opp sensorer slik at de går på fargeID
-		colorLeft = colorSensorLeft.getColorIDMode();
-		colorRight = colorSensorRight.getColorIDMode();
+		//colorLeft = colorSensorLeft.getColorIDMode();
+		//colorRight = colorSensorRight.getColorIDMode();
+		colorLeft = colorSensorLeft.getMode("RGB");
+		colorRight = colorSensorRight.getMode("RGB");
+
+		colorSampleRight = new float[colorRight.sampleSize()];
+		colorRight.fetchSample(colorSampleRight, 0);
+		BLACK_LIMIT_RIGHT = colorSampleRight[0]/2;
+
+		colorSampleLeft = new float[colorLeft.sampleSize()];
+		colorLeft.fetchSample(colorSampleLeft, 0);
+		BLACK_LIMIT_LEFT = colorSampleLeft[0]/2;
+
+		// Sett opp trykksensor
+		touchSensor = new EV3TouchSensor(p4);
 
 		// Hastighet på roboten
 		Motor.A.setSpeed(SPEED);		// Venstre
 		Motor.B.setSpeed(SPEED);		// Høyre
-		Motor.C.setSpeed(SWORD_SPEED);	// Sverd
-		Motor.D.setSpeed(FLAGG_SPEED);	// Flagg
+		//Motor.C.setSpeed(SWORD_SPEED);	// Sverd
+		//Motor.D.setSpeed(FLAGG_SPEED);	// Flagg
+
 		// Starter flagg og sverd
-		Motor.C.forward();				// Sverd
-		Motor.D.forward();				// Flagg
+		//Motor.C.forward();				// Sverd
+		//Motor.D.forward();				// Flagg
 
 		//lyd
-		Mario mario = new Mario();
+		mario = new Mario();
 
 		// Start av programmet
 		int direction = 0;
 
-		while (true) {
+		while (go) {
 			direction = driveUntilBlack();
-
 			if(direction != 0) turnUntilWhite(direction);
-			mario.play();
-
 		}
 	}
 
@@ -149,6 +140,11 @@ class IDIot {
 
 		int result = 0;
 		while (true) {
+			if (checkForTouch()) {
+				go = false;
+				break;
+			}
+			//mario.play();
 			result = checkForBlack();
 			if (result != 0) {
 				break;
@@ -172,6 +168,10 @@ class IDIot {
 			Motor.A.setSpeed(TURN_SPEED);
 		}
 		while (true) {
+			if (checkForTouch()) {
+				go = false;
+				break;
+			}
 			int result = checkForBlack();
 			if (result == 0) {
 				break;
@@ -186,20 +186,45 @@ class IDIot {
 	private static int checkForBlack() {
 		colorSampleLeft = new float[colorLeft.sampleSize()];
 		colorLeft.fetchSample(colorSampleLeft, 0);
-		if((int)colorSampleLeft[0] == 7) {
-			System.out.println("Svart på venstre!");
+		if(colorSampleLeft[0] <= BLACK_LIMIT_LEFT) {
+			System.out.println("Svart venstre: "+(BLACK_LIMIT_LEFT-colorSampleLeft[0])+" under limit.");
 			return 1;
 		}
 
 		colorSampleRight = new float[colorRight.sampleSize()];
 		colorRight.fetchSample(colorSampleRight, 0);
-		if ((int)colorSampleRight[0] == 7) {
-			System.out.println("Svart på høyre!");
+		if (colorSampleRight[0] <= BLACK_LIMIT_RIGHT) {
+			System.out.println("Svart hoyre: "+(BLACK_LIMIT_RIGHT-colorSampleRight[0])+" under limit.");
 			return 2;
 		}
 
 		System.out.println("Ittno svart her!");
 
 		return 0;
+	}
+
+	private static int testBlack() {
+		colorSampleRight = new float[colorRight.sampleSize()];
+		colorRight.fetchSample(colorSampleRight, 0);
+		System.out.println(colorSampleRight[0]);
+		try{
+			Thread.sleep(1000);
+		}
+		catch(InterruptedException e) {
+			System.out.println("Feil elns");
+		}
+		return 0;
+	}
+
+	private static boolean checkForTouch() {
+		touchSample = new float[touchSensor.sampleSize()];
+
+		if (touchSample != null && touchSample.length > 0) {
+			touchSensor.fetchSample(touchSample, 0);
+			if (touchSample[0] > 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
