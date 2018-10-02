@@ -86,12 +86,12 @@ class IDIot {
 		// Hastighet på roboten
 		Motor.A.setSpeed(SPEED);		// Venstre
 		Motor.B.setSpeed(SPEED);		// Høyre
-		//Motor.C.setSpeed(SWORD_SPEED);	// Sverd
-		//Motor.D.setSpeed(FLAGG_SPEED);	// Flagg
+		Motor.C.setSpeed(SWORD_SPEED);	// Sverd
+		Motor.D.setSpeed(FLAGG_SPEED);	// Flagg
 
 		// Starter flagg og sverd
-		//Motor.C.forward();				// Sverd
-		//Motor.D.forward();				// Flagg
+		Motor.C.forward();				// Sverd
+		Motor.D.forward();				// Flagg
 
 		//lyd
 		mario = new Mario();
@@ -144,7 +144,7 @@ class IDIot {
 				go = false;
 				break;
 			}
-			//mario.play();
+			mario.play();
 			result = checkForBlack();
 			if (result != 0) {
 				break;
