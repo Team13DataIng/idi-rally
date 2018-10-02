@@ -37,8 +37,8 @@ class IDIot {
 	private static Mario mario;
 
 	// Konstanter
-	private static final int SPEED = 100;
-	private static final int TURN_SPEED = 50;
+	private static final int SPEED = 400;				// Stabil fart: 320
+	private static final int TURN_SPEED = 300;			// Stabil fart: 300
 	private static final int SWORD_SPEED = 550;
 	private static final int FLAGG_SPEED = 250;
 	private static final int REVERSE_SPEED = 80;
@@ -49,7 +49,7 @@ class IDIot {
 	private static boolean go = true;
 
 	// Andre variabler
-	private static final String VERSION = "b_1.3.0";
+	private static final String VERSION = "b_1.4.0";
 
 	public static void main(String[] args) {
 		// Print startmelding
@@ -98,6 +98,7 @@ class IDIot {
 
 		// Start av programmet
 		int direction = 0;
+		int forrigeTid;
 
 		while (go) {
 			direction = driveUntilBlack();
@@ -136,19 +137,18 @@ class IDIot {
 		Motor.A.setSpeed(SPEED);
 		Motor.B.setSpeed(SPEED);
 
-		startMotor(false);
-
 		int result = 0;
 		while (true) {
 			if (checkForTouch()) {
 				go = false;
 				break;
 			}
-			mario.play();
+			//mario.play();
 			result = checkForBlack();
 			if (result != 0) {
 				break;
 			}
+			startMotor(false);
 		}
 
 		return result;
@@ -173,15 +173,17 @@ class IDIot {
 				go = false;
 				break;
 			}
-			mario.play();
+			//mario.play();
 			int result = checkForBlack();
 			if (result == 3) {
 				System.out.println("counter: "+counter);
-				if (counter == 4) {
+				counter++;
+				if (counter == 8) {
 					System.out.println("Kjører over kryss!");
 					startMotor(false);
 					try{
 						Thread.sleep(1000);
+						System.out.println("Tråd sover 1s");
 					}
 					catch(InterruptedException e) {
 						System.out.println("Feil elns");
@@ -196,7 +198,6 @@ class IDIot {
 					Motor.B.stop();
 					Motor.A.setSpeed(TURN_SPEED);
 				}
-				counter++;
 			}
 			else if (result == 0) {
 				break;
