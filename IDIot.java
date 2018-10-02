@@ -54,8 +54,8 @@ class IDIot {
 	private static Port p1;
 	private static Port p2;
 	private static TextLCD lcd;
-	private static HiTechnicColorSensor colorSensorRight; // Høyre fargesensor
-	private static EV3ColorSensor colorSensorLeft; // Venstre fargesensor
+	private static HiTechnicColorSensor colorSensorRight; //fargesensor høyre ny type
+	private static EV3ColorSensor colorSensorLeft; //fargesensor vesntre gammel type
 	private static SensorMode colorLeft;
 	private static SensorMode colorRight;
 	private static float[] colorSampleLeft;
@@ -71,16 +71,9 @@ class IDIot {
 
 	// Andre variabler
 	private static final String VERSION = "b_1.0.2";
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 	//lyd
 	private static long naaTid;
 	private static long forrigeTid;
-	private static int vol = Sound.getVolume();
-	private static int lydTeller = 0;
-	private static int[][] lyd;
 
 	public static void main(String[] args) {
 		// Print startmelding
@@ -96,7 +89,6 @@ class IDIot {
 		// Høyre sensor = port 2
 		colorSensorRight = new HiTechnicColorSensor(p2);
 
-		// Sett opp sensorer slik at de går på fargeID
 		colorLeft = colorSensorLeft.getColorIDMode();
 		colorRight = colorSensorRight.getColorIDMode();
 
@@ -109,8 +101,11 @@ class IDIot {
 		Motor.C.forward();				// Sverd
 		Motor.D.forward();				// Flagg
 
-		//Lyd
-		Sound.setVolume(66);
+		/*
+		Motor.C.forward();
+		*/
+		// Andre variabler
+		//Sound.setVolume(66);
 
 		// Start av programmet
 		int direction = 0;
@@ -193,6 +188,7 @@ class IDIot {
 	// = 0: none
 	// = 1: left
 	// = 2: right
+	// = 3: both
 	private static int checkForBlack() {
 		colorSampleLeft = new float[colorLeft.sampleSize()];
 		colorLeft.fetchSample(colorSampleLeft, 0);
