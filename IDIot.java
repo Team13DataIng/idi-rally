@@ -35,6 +35,7 @@ class IDIot {
 	private static SampleProvider touchSensor;
 	private static float[] touchSample;
 	private static Mario mario;
+	private static long forrigeTid;
 
 	// Konstanter
 	private static final int SPEED = 400;				// Stabil fart: 320
@@ -49,7 +50,7 @@ class IDIot {
 	private static boolean go = true;
 
 	// Andre variabler
-	private static final String VERSION = "b_1.4.0";
+	private static final String VERSION = "b_1.5.0";
 
 	public static void main(String[] args) {
 		// Print startmelding
@@ -98,7 +99,6 @@ class IDIot {
 
 		// Start av programmet
 		int direction = 0;
-		int forrigeTid;
 
 		while (go) {
 			direction = driveUntilBlack();
@@ -143,7 +143,7 @@ class IDIot {
 				go = false;
 				break;
 			}
-			//mario.play();
+			mario.play();
 			result = checkForBlack();
 			if (result != 0) {
 				break;
@@ -157,7 +157,6 @@ class IDIot {
 	private static void turnUntilWhite(int direction) {
 		// Sving inntil begge er utenfor svart
 		if(direction == 1){
-			//todo test om det er bedre å senke farten på det ene hjulet istedet for å stoppe det.
 			//System.out.println("Svinger til venstre");
 			Motor.A.stop();
 			Motor.B.setSpeed(TURN_SPEED);
@@ -167,36 +166,38 @@ class IDIot {
 			Motor.B.stop();
 			Motor.A.setSpeed(TURN_SPEED);
 		}
-		int counter = 0;
+		//long naaTid = java.lang.System.currentTimeMillis();
 		while (true) {
 			if (checkForTouch()) {
 				go = false;
 				break;
 			}
-			//mario.play();
+			mario.play();
 			int result = checkForBlack();
 			if (result == 3) {
-				System.out.println("counter: "+counter);
-				counter++;
-				if (counter == 8) {
-					System.out.println("Kjører over kryss!");
-					startMotor(false);
+				if(direction == 2) {
+					Motor.A.stop();
+					Motor.B.setSpeed(TURN_SPEED);
+					Motor.B.forward();
 					try{
-						Thread.sleep(1000);
+						Thread.sleep(600);
 						System.out.println("Tråd sover 1s");
 					}
 					catch(InterruptedException e) {
 						System.out.println("Feil elns");
 					}
-					break;
-				}
-				if(direction == 2) {
-					Motor.A.stop();
-					Motor.B.setSpeed(TURN_SPEED);
 				}
 				else if(direction == 1){
 					Motor.B.stop();
 					Motor.A.setSpeed(TURN_SPEED);
+					Motor.A.forward();
+					try{
+						Thread.sleep(600);
+						System.out.println("Tråd sover 1s");
+					}
+					catch(InterruptedException e) {
+						System.out.println("Feil elns");
+					}
 				}
 			}
 			else if (result == 0) {
