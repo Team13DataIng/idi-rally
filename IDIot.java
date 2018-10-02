@@ -100,7 +100,7 @@ class IDIot {
 		Motor.D.forward();				// Flagg
 
 		//lyd
-		//Mario mario = new Mario();
+		Mario mario = new Mario();
 
 		// Start av programmet
 		int direction = 0;
@@ -109,6 +109,7 @@ class IDIot {
 			direction = driveUntilBlack();
 
 			if(direction != 0) turnUntilWhite(direction);
+			mario.play();
 
 		}
 	}
