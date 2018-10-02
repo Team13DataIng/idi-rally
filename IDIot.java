@@ -54,8 +54,8 @@ class IDIot {
 	private static Port p1;
 	private static Port p2;
 	private static TextLCD lcd;
-	private static HiTechnicColorSensor colorSensorRight; //fargesensor høyre ny type
-	private static EV3ColorSensor colorSensorLeft; //fargesensor vesntre gammel type
+	private static HiTechnicColorSensor colorSensorRight; // Høyre fargesensor
+	private static EV3ColorSensor colorSensorLeft; // Venstre fargesensor
 	private static SensorMode colorLeft;
 	private static SensorMode colorRight;
 	private static float[] colorSampleLeft;
@@ -70,10 +70,7 @@ class IDIot {
 	private static final int REVERSE_SPEED = 80;
 
 	// Andre variabler
-	private static final String VERSION = "b_1.0.2";
-	//lyd
-	private static long naaTid;
-	private static long forrigeTid;
+	private static final String VERSION = "b_1.0.3";
 
 	public static void main(String[] args) {
 		// Print startmelding
@@ -89,6 +86,7 @@ class IDIot {
 		// Høyre sensor = port 2
 		colorSensorRight = new HiTechnicColorSensor(p2);
 
+		// Sett opp sensorer slik at de går på fargeID
 		colorLeft = colorSensorLeft.getColorIDMode();
 		colorRight = colorSensorRight.getColorIDMode();
 
@@ -101,11 +99,8 @@ class IDIot {
 		Motor.C.forward();				// Sverd
 		Motor.D.forward();				// Flagg
 
-		/*
-		Motor.C.forward();
-		*/
-		// Andre variabler
-		//Sound.setVolume(66);
+		//lyd
+		Mario mario = new Mario();
 
 		// Start av programmet
 		int direction = 0;
@@ -166,15 +161,13 @@ class IDIot {
 		if(direction == 1){
 			//todo test om det er bedre å senke farten på det ene hjulet istedet for å stoppe det.
 			System.out.println("Svinger til venstre");
-			Motor.A.setSpeed(REVERSE_SPEED);
-			Motor.A.backward();
-			//Motor.B.setSpeed(TURN_SPEED);
+			Motor.A.stop();
+			Motor.B.setSpeed(TURN_SPEED);
 		}
 		else if(direction == 2){
 			System.out.println("Svinger til høyre");
-			Motor.B.setSpeed(REVERSE_SPEED);
-			Motor.B.backward();
-			//Motor.A.setSpeed(TURN_SPEED);
+			Motor.B.stop();
+			Motor.A.setSpeed(TURN_SPEED);
 		}
 		while (true) {
 			int result = checkForBlack();
@@ -188,7 +181,6 @@ class IDIot {
 	// = 0: none
 	// = 1: left
 	// = 2: right
-	// = 3: both
 	private static int checkForBlack() {
 		colorSampleLeft = new float[colorLeft.sampleSize()];
 		colorLeft.fetchSample(colorSampleLeft, 0);
