@@ -49,7 +49,7 @@ class IDIot {
 	private static boolean go = true;
 
 	// Andre variabler
-	private static final String VERSION = "b_1.2.0";
+	private static final String VERSION = "b_1.3.0";
 
 	public static void main(String[] args) {
 		// Print startmelding
@@ -158,15 +158,16 @@ class IDIot {
 		// Sving inntil begge er utenfor svart
 		if(direction == 1){
 			//todo test om det er bedre å senke farten på det ene hjulet istedet for å stoppe det.
-			System.out.println("Svinger til venstre");
+			//System.out.println("Svinger til venstre");
 			Motor.A.stop();
 			Motor.B.setSpeed(TURN_SPEED);
 		}
 		else if(direction == 2){
-			System.out.println("Svinger til høyre");
+			//System.out.println("Svinger til høyre");
 			Motor.B.stop();
 			Motor.A.setSpeed(TURN_SPEED);
 		}
+		int counter = 0;
 		while (true) {
 			if (checkForTouch()) {
 				go = false;
@@ -174,8 +175,20 @@ class IDIot {
 			}
 			mario.play();
 			int result = checkForBlack();
-			if (result == 3){
-				if(direction == 2){
+			if (result == 3) {
+				System.out.println("counter: "+counter);
+				if (counter == 4) {
+					System.out.println("Kjører over kryss!");
+					startMotor(false);
+					try{
+						Thread.sleep(1000);
+					}
+					catch(InterruptedException e) {
+						System.out.println("Feil elns");
+					}
+					break;
+				}
+				if(direction == 2) {
 					Motor.A.stop();
 					Motor.B.setSpeed(TURN_SPEED);
 				}
@@ -183,6 +196,7 @@ class IDIot {
 					Motor.B.stop();
 					Motor.A.setSpeed(TURN_SPEED);
 				}
+				counter++;
 			}
 			else if (result == 0) {
 				break;
@@ -201,12 +215,12 @@ class IDIot {
 		colorSampleRight = new float[colorRight.sampleSize()];
 		colorRight.fetchSample(colorSampleRight, 0);
 		if(colorSampleLeft[0] <= BLACK_LIMIT_LEFT) {
-			System.out.println("Svart venstre: "+(BLACK_LIMIT_LEFT-colorSampleLeft[0])+" under limit.");
+			//System.out.println("Svart venstre: "+(BLACK_LIMIT_LEFT-colorSampleLeft[0])+" under limit.");
 			status = 1;
 		}
 
 		if (colorSampleRight[0] <= BLACK_LIMIT_RIGHT) {
-			System.out.println("Svart hoyre: "+(BLACK_LIMIT_RIGHT-colorSampleRight[0])+" under limit.");
+			//System.out.println("Svart hoyre: "+(BLACK_LIMIT_RIGHT-colorSampleRight[0])+" under limit.");
 			status = 2;
 		}
 
@@ -215,7 +229,7 @@ class IDIot {
 			status = 3;
 		}
 
-		System.out.println("Ittno svart her!");
+		//System.out.println("Ittno svart her!");
 
 		return status;
 	}
@@ -223,7 +237,6 @@ class IDIot {
 	private static int testBlack() {
 		colorSampleRight = new float[colorRight.sampleSize()];
 		colorRight.fetchSample(colorSampleRight, 0);
-		System.out.println(colorSampleRight[0]);
 		try{
 			Thread.sleep(1000);
 		}
