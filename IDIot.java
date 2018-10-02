@@ -37,8 +37,8 @@ class IDIot {
 	private static Mario mario;
 
 	// Konstanter
-	private static final int SPEED = 450;
-	private static final int TURN_SPEED = 150;
+	private static final int SPEED = 100;
+	private static final int TURN_SPEED = 50;
 	private static final int SWORD_SPEED = 550;
 	private static final int FLAGG_SPEED = 250;
 	private static final int REVERSE_SPEED = 80;
@@ -49,7 +49,7 @@ class IDIot {
 	private static boolean go = true;
 
 	// Andre variabler
-	private static final String VERSION = "b_1.1.0";
+	private static final String VERSION = "b_1.2.0";
 
 	public static void main(String[] args) {
 		// Print startmelding
@@ -172,8 +172,19 @@ class IDIot {
 				go = false;
 				break;
 			}
+			mario.play();
 			int result = checkForBlack();
-			if (result == 0) {
+			if (result == 3){
+				if(direction == 2){
+					Motor.A.stop();
+					Motor.B.setSpeed(TURN_SPEED);
+				}
+				else if(direction == 1){
+					Motor.B.stop();
+					Motor.A.setSpeed(TURN_SPEED);
+				}
+			}
+			else if (result == 0) {
 				break;
 			}
 		}
@@ -184,23 +195,29 @@ class IDIot {
 	// = 1: left
 	// = 2: right
 	private static int checkForBlack() {
+		int status = 0;
 		colorSampleLeft = new float[colorLeft.sampleSize()];
 		colorLeft.fetchSample(colorSampleLeft, 0);
-		if(colorSampleLeft[0] <= BLACK_LIMIT_LEFT) {
-			System.out.println("Svart venstre: "+(BLACK_LIMIT_LEFT-colorSampleLeft[0])+" under limit.");
-			return 1;
-		}
-
 		colorSampleRight = new float[colorRight.sampleSize()];
 		colorRight.fetchSample(colorSampleRight, 0);
+		if(colorSampleLeft[0] <= BLACK_LIMIT_LEFT) {
+			System.out.println("Svart venstre: "+(BLACK_LIMIT_LEFT-colorSampleLeft[0])+" under limit.");
+			status = 1;
+		}
+
 		if (colorSampleRight[0] <= BLACK_LIMIT_RIGHT) {
 			System.out.println("Svart hoyre: "+(BLACK_LIMIT_RIGHT-colorSampleRight[0])+" under limit.");
-			return 2;
+			status = 2;
+		}
+
+		if (colorSampleRight[0] <= BLACK_LIMIT_RIGHT && colorSampleLeft[0] <= BLACK_LIMIT_LEFT ){
+			System.out.println("Svart begge.");
+			status = 3;
 		}
 
 		System.out.println("Ittno svart her!");
 
-		return 0;
+		return status;
 	}
 
 	private static int testBlack() {
