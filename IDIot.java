@@ -67,9 +67,10 @@ class IDIot {
 	private static final int TURN_SPEED = 150;
 	private static final int SWORD_SPEED = 550;
 	private static final int FLAGG_SPEED = 250;
+	private static final int REVERSE_SPEED = 80;
 
 	// Andre variabler
-	private static final String VERSION = "b_1.0.1";
+	private static final String VERSION = "b_1.0.2";
 	//lyd
 	private static long naaTid;
 	private static long forrigeTid;
@@ -165,15 +166,15 @@ class IDIot {
 		if(direction == 1){
 			//todo test om det er bedre å senke farten på det ene hjulet istedet for å stoppe det.
 			System.out.println("Svinger til venstre");
-			Motor.A.setSpeed(TURN_SPEED);
+			Motor.A.setSpeed(REVERSE_SPEED);
 			Motor.A.backward();
-			Motor.B.setSpeed(TURN_SPEED);
+			//Motor.B.setSpeed(TURN_SPEED);
 		}
 		else if(direction == 2){
 			System.out.println("Svinger til høyre");
-			Motor.B.setSpeed(TURN_SPEED);
+			Motor.B.setSpeed(REVERSE_SPEED);
 			Motor.B.backward();
-			Motor.A.setSpeed(TURN_SPEED);
+			//Motor.A.setSpeed(TURN_SPEED);
 		}
 		while (true) {
 			int result = checkForBlack();
