@@ -40,7 +40,7 @@ class IDIot {
 	// Konstanter
 	private static final int SPEED = 400;				// Stabil fart: 320
 	private static final int TURN_SPEED = 300;			// Stabil fart: 300
-	private static final int SWORD_SPEED = 550;
+	private static final int SWORD_SPEED = 250;
 	private static final int FLAGG_SPEED = 250;
 	private static final int REVERSE_SPEED = 80;
 	private static float BLACK_LIMIT_LEFT;
@@ -50,7 +50,7 @@ class IDIot {
 	private static boolean go = true;
 
 	// Andre variabler
-	private static final String VERSION = "b_1.5.0";
+	private static final String VERSION = "b_1.5.1";
 
 	public static void main(String[] args) {
 		// Print startmelding
@@ -143,7 +143,7 @@ class IDIot {
 				go = false;
 				break;
 			}
-			mario.play();
+			//mario.play();
 			result = checkForBlack();
 			if (result != 0) {
 				break;
@@ -172,7 +172,7 @@ class IDIot {
 				go = false;
 				break;
 			}
-			mario.play();
+			//mario.play();
 			int result = checkForBlack();
 			if (result == 3) {
 				if(direction == 2) {
