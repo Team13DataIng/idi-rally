@@ -34,29 +34,27 @@ class IDIot {
 	private static float[] colorSampleRight;
 	private static SampleProvider touchSensor;
 	private static float[] touchSample;
-	private static Mario mario;
-	private static long forrigeTid;
 
 	// Konstanter
-	private static final int SPEED = 400;				// Stabil fart: 320
+	private static final int SPEED = 320;				// Stabil fart: 320
 	private static final int TURN_SPEED = 300;			// Stabil fart: 300
-	private static final int SWORD_SPEED = 550;
+	private static final int SWORD_SPEED = 250;
 	private static final int FLAGG_SPEED = 250;
 	private static final int REVERSE_SPEED = 80;
-	private static float BLACK_LIMIT_LEFT;
-	private static float BLACK_LIMIT_RIGHT;
 
 	//Variabel som bestemmer om roboten skal kjøre eller er ferdig
 	private static boolean go = true;
 
 	// Andre variabler
-	private static final String VERSION = "b_1.5.0";
+	private static final String VERSION = "b_1.5.2";
+	private static float blackLimitLeft;
+	private static float blackLimitRight;
 
 	public static void main(String[] args) {
 		// Print startmelding
 		System.out.println("IDIot versjon " + VERSION);
 
-		// Oppsett av robotens kompone	nter
+		// Oppsett av robotens komponenter
 		brick = BrickFinder.getDefault();
 		p1 = brick.getPort("S1"); // Fargesensor venstre
 		p2 = brick.getPort("S2"); // Fargesensor høyre
@@ -67,19 +65,18 @@ class IDIot {
 		// Høyre sensor = port 2
 		colorSensorRight = new HiTechnicColorSensor(p2);
 
-		// Sett opp sensorer slik at de går på fargeID
-		//colorLeft = colorSensorLeft.getColorIDMode();
-		//colorRight = colorSensorRight.getColorIDMode();
+		// Sett opp sensorer slik at de går på RGB
 		colorLeft = colorSensorLeft.getMode("RGB");
 		colorRight = colorSensorRight.getMode("RGB");
 
+		// Skann hvitt ved start av programmet slik at sensorene har en referanse
 		colorSampleRight = new float[colorRight.sampleSize()];
 		colorRight.fetchSample(colorSampleRight, 0);
-		BLACK_LIMIT_RIGHT = colorSampleRight[0]/2;
+		blackLimitRight = colorSampleRight[0]/2;
 
 		colorSampleLeft = new float[colorLeft.sampleSize()];
 		colorLeft.fetchSample(colorSampleLeft, 0);
-		BLACK_LIMIT_LEFT = colorSampleLeft[0]/2;
+		blackLimitLeft = colorSampleLeft[0]/2;
 
 		// Sett opp trykksensor
 		touchSensor = new EV3TouchSensor(p4);
@@ -94,13 +91,11 @@ class IDIot {
 		Motor.C.forward();				// Sverd
 		Motor.D.forward();				// Flagg
 
-		//lyd
-		mario = new Mario();
-
 		// Start av programmet
 		int direction = 0;
 
 		while (go) {
+			// Sjekk sensor på hver side, og juster retningen den skal kjøre
 			direction = driveUntilBlack();
 			if(direction != 0) turnUntilWhite(direction);
 		}
@@ -143,7 +138,7 @@ class IDIot {
 				go = false;
 				break;
 			}
-			mario.play();
+			//mario.play();
 			result = checkForBlack();
 			if (result != 0) {
 				break;
@@ -172,9 +167,10 @@ class IDIot {
 				go = false;
 				break;
 			}
-			mario.play();
+			//mario.play();
 			int result = checkForBlack();
 			if (result == 3) {
+				// Dersom begge sensorene registrerer svart, skal den svinge andre veien
 				if(direction == 2) {
 					Motor.A.stop();
 					Motor.B.setSpeed(TURN_SPEED);
@@ -216,22 +212,20 @@ class IDIot {
 		colorLeft.fetchSample(colorSampleLeft, 0);
 		colorSampleRight = new float[colorRight.sampleSize()];
 		colorRight.fetchSample(colorSampleRight, 0);
-		if(colorSampleLeft[0] <= BLACK_LIMIT_LEFT) {
-			//System.out.println("Svart venstre: "+(BLACK_LIMIT_LEFT-colorSampleLeft[0])+" under limit.");
+		if(colorSampleLeft[0] <= blackLimitLeft) {
+			// Svart på venstre
 			status = 1;
 		}
 
-		if (colorSampleRight[0] <= BLACK_LIMIT_RIGHT) {
-			//System.out.println("Svart hoyre: "+(BLACK_LIMIT_RIGHT-colorSampleRight[0])+" under limit.");
+		if (colorSampleRight[0] <= blackLimitRight) {
+			// Svart på høyre
 			status = 2;
 		}
 
-		if (colorSampleRight[0] <= BLACK_LIMIT_RIGHT && colorSampleLeft[0] <= BLACK_LIMIT_LEFT ){
+		if (colorSampleRight[0] <= blackLimitRight && colorSampleLeft[0] <= blackLimitLeft ){
 			System.out.println("Svart begge.");
 			status = 3;
 		}
-
-		//System.out.println("Ittno svart her!");
 
 		return status;
 	}
